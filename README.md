@@ -17,6 +17,13 @@ The Tracker will comunicate with the server relaying a lat/long every set time i
 The server can then serve a web app to the smartphones making use of google maps api
 
 
+Folder Structure
+----------------
+In the root directory there are two sub folders, these are Server and Tracker.
+Server currently holds a blank pyramid scafold for the web server
+Tracker currently contains nothing
+
+
 Setup
 -----
 
