@@ -21,7 +21,7 @@ Folder Structure
 ----------------
 In the root directory there are two sub folders, these are Server and Tracker.
 Server currently holds a blank pyramid scafold for the web server
-Tracker currently contains nothing
+Tracker currently only contains a makefile to pull in gpsd
 
 
 Setup
