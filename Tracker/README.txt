@@ -4,7 +4,7 @@ To setup:
 	run make setup
 	this will pull in gpsd to deal with getting NMEA data strings ect
 	gpsd dumps JSON data on localhost:2947
-	you must ?WATCH={"enable":true,"json":true
+	you must ?WATCH={"enable":true,"json":true}
 
 To Do:
 	script for listening on localhost:2947
