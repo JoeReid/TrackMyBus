@@ -8,12 +8,30 @@ with open(os.path.join(here, 'README.txt')) as f:
 with open(os.path.join(here, 'CHANGES.txt')) as f:
     CHANGES = f.read()
 
-requires = [
+install_requires = [
     'pyramid',
-    'pyramid_chameleon',
-    'pyramid_debugtoolbar',
+    #'pyramid_chameleon',
     'waitress',
-    ]
+    'pyramid_mako',
+    'pyramid_tm',
+    'pyramid_beaker', # Session/Cache framework - Deprecated by pyramid because it is unmaintained
+    'decorator',
+    'beautifulsoup4',
+    'python-dateutil',
+    'dogpile.cache',
+    'mock',
+    'SQLAlchemy',
+    'transaction',
+    'zope.sqlalchemy',
+    'py-postgresql',
+]
+test_requires = [
+    'pyramid_debugtoolbar',
+    'pytest',
+    'webtest',
+    #'pudb',  # Won't import, needs compiled stuff
+]
+
 
 setup(name='Server',
       version='0.0',
@@ -32,8 +50,8 @@ setup(name='Server',
       packages=find_packages(),
       include_package_data=True,
       zip_safe=False,
-      install_requires=requires,
-      tests_require=requires,
+      install_requires=install_requires+test_requires,
+      tests_require=install_requires+test_requires,
       test_suite="server",
       entry_points="""\
       [paste.app_factory]

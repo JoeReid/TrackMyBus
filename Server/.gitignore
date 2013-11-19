@@ -1,0 +1,8 @@
+*.db
+dependencys_installed.json
+ext
+*.pyc
+*.egg-info
+env
+data
+
