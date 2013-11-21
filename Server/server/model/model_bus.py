@@ -30,6 +30,15 @@ class BusPosition(Base):
     lat             = Column(Float()   , nullable=False)
     lon             = Column(Float()   , nullable=False)
     
+    @staticmethod
+    def last_position(DBSession, route_id):
+        """
+        """
+        try:
+            return DBSession.query(BusPosition).order_by(BusPosition.timestamp.desc()).limit(1).one()
+        except NoResultFound:
+            return None
+    
     __to_dict__ = copy.deepcopy(Base.__to_dict__)
     __to_dict__.update({
         'default': {
@@ -86,7 +95,7 @@ class BusStop(Base):
 class BusCheckin(Base):
     """
     """
-    ___tablename__ = "bus_checkin"
+    __tablename__   = "bus_checkin"
     id              = Column(Integer() , primary_key=True)
     bus_stop_id     = Column(Integer() , ForeignKey('bus_stop.id'), nullable=False)
     timestamp       = Column(DateTime(), nullable=False, default=now)

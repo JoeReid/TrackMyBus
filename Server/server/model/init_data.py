@@ -16,7 +16,7 @@ log = logging.getLogger(__name__)
 
 # The DB modules imported here will be created as part of the blank database.
 # If you add a new model ensure it ia added here
-#from .model_???   import ???
+from .model_bus   import BusCheckin, BusStop, BusPosition
 
 
 #-------------------------------------------------------------------------------
