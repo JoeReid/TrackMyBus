@@ -43,6 +43,10 @@ run_production:
 init_db:
 	env/bin/python -mserver.model.setup --config_uri $(INI_DEV) --init_func server.model.init_data:init_data
 
+import_stops:
+	env/bin/python -m$(PROJECT).model.setup --config_uri $(INI_DEV) --init_func $(PROJECT).model.init_data:init_data
+	env/bin/python -m$(PROJECT).scripts.import_busstops --config=$(INI_DEV)
+
 start_webapp_daemon: ini_vagrant
 	start-stop-daemon --start --pidfile webapp.pid --name $(PROJECT) --make-pidfile --background --exec /bin/bash -- -c "$(CURDIR)/env/bin/pserve $(CURDIR)/$(INI_VAGRANT)"
 stop_webapp_daemon:
