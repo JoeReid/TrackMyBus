@@ -94,19 +94,20 @@ def main():
         csv_reader = csv.reader(csv_file)
         count = 0
         for row in csv_reader:
-            id, name, direction, lon, lat = [row[i] for i in [1,4,16,29,30]]
+            code, name, direction, lon, lat = [row[i] for i in [1,4,16,29,30]]
             if filter_bounds.in_bounds(lon, lat):
                 busstop = BusStop()
-                if id:
-                    busstop.id = id
+                busstop.code = code
+                busstop.route_id = '1'
                 busstop.name = name
-                busstop.direction = direction
+                busstop.direction = direction 
                 busstop.lon = lon
                 busstop.lat = lat
                 DBSession.add(busstop)
-                commit()
-                print(id, name, direction, lon, lat)
+                print(code, name, direction, lon, lat)
             count += 1
+            if count % 50 == 0:
+                commit() # Commiting every record is rediculusly inefficent
             if count % 100000 == 0:
                 print('Processed: {0}'.format(count))
 
