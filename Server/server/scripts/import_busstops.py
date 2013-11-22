@@ -96,6 +96,15 @@ def main():
         for row in csv_reader:
             id, name, direction, lon, lat = [row[i] for i in [1,4,16,29,30]]
             if filter_bounds.in_bounds(lon, lat):
+                busstop = BusStop()
+                if id:
+                    busstop.id = id
+                busstop.name = name
+                busstop.direction = direction
+                busstop.lon = lon
+                busstop.lat = lat
+                DBSession.add(busstop)
+                commit()
                 print(id, name, direction, lon, lat)
             count += 1
             if count % 100000 == 0:

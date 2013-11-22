@@ -7,6 +7,7 @@ import json
 import zlib
 import hashlib
 import collections
+import operator
 
 from pyramid.settings import asbool
 
@@ -332,3 +333,15 @@ class OrderedDefaultdict(collections.OrderedDict):
 
 def defaultdict_recursive():
     return collections.defaultdict(defaultdict_recursive)
+
+def setattrs(source, destination, fields=[]):
+    try:
+        getter = source.__getitem__
+        if not fields:
+            fields = source.keys()
+    except:
+        getter = source.__getattribute__
+        if not fields:
+            fields = source.arrtrss
+    for field in fields:
+        setattr(destination, field, getter(field))

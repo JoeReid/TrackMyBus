@@ -24,7 +24,8 @@ class BusPosition(Base):
     """
     __tablename__   = "bus_position"
 
-    id              = Column(Integer() , primary_key=True)    
+    id              = Column(Integer() , primary_key=True)
+    bus_id          = Column(Integer())
     route_id        = Column(Unicode(4), nullable=False)
     timestamp       = Column(DateTime(), nullable=False, default=now)
     lat             = Column(Float()   , nullable=False)
@@ -62,6 +63,9 @@ class BusStop(Base):
     route_id        = Column(Unicode(4), nullable=False)
     lat             = Column(Float()   , nullable=False)
     lon             = Column(Float()   , nullable=False)
+    code            = Column(Unicode(8), nullable=True)
+    name            = Column(Unicode() , nullable=True)
+    direction       = Column(Unicode(2), nullable=True) # Could be radians? super accurate direction
 
     @property
     def last_checkin(self):
@@ -97,6 +101,7 @@ class BusCheckin(Base):
     """
     __tablename__   = "bus_checkin"
     id              = Column(Integer() , primary_key=True)
+    bus_id          = Column(Integer() , nullable=False)
     bus_stop_id     = Column(Integer() , ForeignKey('bus_stop.id'), nullable=False)
     timestamp       = Column(DateTime(), nullable=False, default=now)
     
