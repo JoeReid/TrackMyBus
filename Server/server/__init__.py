@@ -2,6 +2,9 @@ import re
 
 from pyramid.config import Configurator
 
+# SQLAlchemy imports
+from .model import init_DBSession
+
 from .lib.auto_format import registered_formats
 from .lib.misc import convert_str_with_type
 
@@ -9,6 +12,8 @@ from .lib.misc import convert_str_with_type
 def main(global_config, **settings):
     """ This function returns a Pyramid WSGI application.
     """
+    init_DBSession(settings)
+    
     config = Configurator(settings=settings)
     config.include('pyramid_mako')
     
@@ -28,9 +33,10 @@ def main(global_config, **settings):
     def append_format_pattern(route):
         return re.sub(r'{(.*)}', r'{\1:[^/\.]+}', route) + r'{spacer:[.]?}{format:(%s)?}' % '|'.join(registered_formats())
     
-    config.add_route('home'          , append_format_pattern('/')              )
-    config.add_route('checkin'       , append_format_pattern('/checkin')       )
-    
+    config.add_route('home'           , append_format_pattern('/')               )
+    config.add_route('position_update', append_format_pattern('/position_update'))
+    config.add_route('position_get'   , append_format_pattern('/position_get')   )
+    config.add_route('last_checkin'   , append_format_pattern('/last_checkin')   )
     
     config.scan()
     return config.make_wsgi_app()
