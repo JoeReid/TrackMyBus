@@ -50,6 +50,10 @@ import_stops:
 	env/bin/python -m$(PROJECT).model.setup --config_uri $(INI_DEV) --init_func $(PROJECT).model.init_data:init_data
 	env/bin/python -m$(PROJECT).scripts.import_busstops --config=$(INI_DEV)
 
+import_stops_production:
+	env/bin/python -m$(PROJECT).model.setup --config_uri $(INI_PROD) --init_func $(PROJECT).model.init_data:init_data
+	env/bin/python -m$(PROJECT).scripts.import_busstops --config=$(INI_PROD)
+
 start_webapp_daemon: ini_vagrant
 	start-stop-daemon --start --pidfile webapp.pid --name $(PROJECT) --make-pidfile --background --exec /bin/bash -- -c "$(CURDIR)/env/bin/pserve $(CURDIR)/$(INI_VAGRANT)"
 stop_webapp_daemon:
