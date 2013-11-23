@@ -15,5 +15,19 @@
         "source": "http://raw.github.com/carhartl/jquery-cookie/vVERSION/jquery.cookie.js",
         "version": "1.4.0",
         "target": "js/jquery.cookie.js"
+    },
+    
+    "bootstrap": {
+        "source": "http://raw.github.com/twbs/bootstrap/vVERSION/dist/",
+        "version": "3.0.0",
+        "target": [
+            "js/bootstrap.min.js",
+            "css/bootstrap-theme.min.css",
+            "css/bootstrap.min.css",
+            "fonts/glyphicons-halflings-regular.woff",
+            "fonts/glyphicons-halflings-regular.ttf",
+            "fonts/glyphicons-halflings-regular.eot",
+            "fonts/glyphicons-halflings-regular.svg"
+        ]
     }
 }
