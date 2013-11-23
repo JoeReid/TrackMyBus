@@ -4,6 +4,7 @@ External dependencys do not be commited to the repo
 import os
 import csv
 import re
+import codecs
 
 from ..model.model_bus import BusStop
 from ..model           import init_DBSession, DBSession, commit
@@ -90,7 +91,7 @@ def main():
 
     filter_bounds = FilterBounds(args.filter_bounds)
 
-    with open(args.csv_input, 'r') as csv_file:
+    with codecs.open(args.csv_input, 'r', "utf8", "replace") as csv_file:
         csv_reader = csv.reader(csv_file)
         count = 0
         for row in csv_reader:
