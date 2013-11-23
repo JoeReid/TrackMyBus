@@ -21,6 +21,7 @@ install_requires = [
     'dogpile.cache',
     'mock',
     'SQLAlchemy',
+    'psycopg2',
     'transaction',
     'zope.sqlalchemy',
     'py-postgresql',
