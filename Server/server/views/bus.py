@@ -78,7 +78,8 @@ def position_get(request):
         .all()
     return action_ok(
         data={
-            'positions': [pos.to_dict() for pos in positions]
+            "type": "FeatureCollection",
+            'features': [pos.to_dict() for pos in positions],
         }
     )
 
@@ -113,7 +114,8 @@ def near_stops(request):
         .limit(50).all()
 
     return action_ok(data={
-        'bus_stops': [bus_stop.to_dict() for bus_stop in bus_stops]
+        "type": "FeatureCollection",
+        "features": [bus_stop.to_dict() for bus_stop in bus_stops]
     })
 
 
@@ -131,15 +133,23 @@ def near_bus(request):
     params['threshold'] = float(params.get('threshold', request.registry.settings.get('bus.api.threshold.default')))
 
     bus_positions = DBSession.query(BusPosition) \
-        .filter(BusPosition.timestamp>datetime.datetime.now()-datetime.timedelta(minutes=1)) \
+        .filter(BusPosition.timestamp>datetime.datetime.now()-datetime.timedelta(minutes=15)) \
         .filter(BusPosition.lon>params['lon']-params['threshold']) \
         .filter(BusPosition.lon<params['lon']+params['threshold']) \
         .filter(BusPosition.lat>params['lat']-params['threshold']) \
         .filter(BusPosition.lat<params['lat']+params['threshold']) \
         .order_by(BusPosition.timestamp) \
-        .group_by(BusPosition.bus_id) \
-        .limit(10).all()
+        .all()
+        # group_by needs all columns to be explicit
+        #.limit(10).all()
+        #.group_by(BusPosition.bus_id) \
+
+    # get the latest update for each bus in the area
+    latest = {}
+    for pos in bus_positions:
+        if pos.bus_id not in latest or latest[pos.bus_id].timestamp < pos.timestamp:
+            latest[pos.bus_id] = pos
 
     return action_ok(data={
-        'bus_positions': [bus_position.to_dict() for bus_position in bus_positions]
+        'bus_positions': [bus_position.to_dict() for bus_position in latest.values()]
     })

@@ -53,6 +53,20 @@ class BusPosition(Base):
     __to_dict__['full'].update({
     })
 
+    def to_dict(self):
+        return {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [self.lon, self.lat],
+            },
+            "properties": {
+                "bus_id": self.bus_id,
+                "route_id": self.route_id,
+                "timestamp": self.timestamp,
+            },
+        }
+
 
 class BusStop(Base):
     """
@@ -94,6 +108,21 @@ class BusStop(Base):
     __to_dict__['full'].update({
         'last_checkin'    : None , 
     })
+
+    def to_dict(self):
+        return {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [self.lon, self.lat],
+            },
+            "properties": {
+                "route_id": self.route_id,
+                "code": self.code,
+                "name": self.name,
+                "direction": self.direction,
+            },
+        }
 
 
 class BusCheckin(Base):
