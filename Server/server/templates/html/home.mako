@@ -7,7 +7,7 @@ links = [
 	'/position_update.json?bus_id=1&lon=0.76&lat=52.0&route_id=1',
 	'/near_stops?lon=1.4&lat=51.2',
 	'/near_stops.json?lon=1.4&lat=51.2&threshold=0.01',
-	'/near_bus?lon=0.761&lat=52.001&threshold=0.01'
+	'/near_bus.json?lon=0.761&lat=52.001&threshold=0.01'
 ]
 %>
 
