@@ -2,11 +2,15 @@
 import time
 import socket
 import json
-import gps
+import threading
+from gps import *
 
 # Global vars
 gRoute = ""
 gLatLong = ""
+gpsd = None
+# use gpsd.fix.latitude and gpsd.fix.longitude
+# also gpsd.fix.mode for determining fix
 
 
 class dataObject(object):
@@ -30,5 +34,22 @@ class dataObject(object):
     
 class dataListener(object):
     def __init__(self):
-        pass
+        global gpsd
+        gpsd = gps(mode=WATCH_ENABLE)
+        self.running = False
+        
+    # to be run in a thread
+    def run(self):
+        self.running = True
+        while self.running:
+            self.gpsd.next()
     
+    def stop(self):
+        self.running = False
+    
+def main():
+    l = dataListener()
+    d = dataObject()
+    
+
+main()
