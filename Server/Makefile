@@ -44,6 +44,8 @@ init_db:
 	env/bin/python -mserver.model.setup --config_uri $(INI_DEV) --init_func server.model.init_data:init_data
 
 init_db_production:
+	sudo -u postgres psql -c "create user tmb with password 'tmb23523';" || true
+	sudo -u postgres psql -c "create database tmb with owner tmb encoding 'utf8';" || true
 	env/bin/python -mserver.model.setup --config_uri $(INI_PROD) --init_func server.model.init_data:init_data
 
 import_stops:
