@@ -37,6 +37,8 @@ def main(global_config, **settings):
     config.add_route('position_update', append_format_pattern('/position_update'))
     config.add_route('position_get'   , append_format_pattern('/position_get')   )
     config.add_route('last_checkin'   , append_format_pattern('/last_checkin')   )
+    config.add_route('near_stops'     , append_format_pattern('/near_stops')      )
+    config.add_route('near_bus'       , append_format_pattern('/near_bus')       )
     
     config.scan()
     return config.make_wsgi_app()

@@ -1,3 +1,5 @@
+import datetime
+
 from pyramid.view import view_config
 
 from ..lib.misc import setattrs
@@ -55,6 +57,7 @@ def position_update(request):
 
     return action_ok(data={})
 
+
 @view_config(route_name='position_get') # Could have get router here for REST
 @web
 def position_get(request):
@@ -79,6 +82,7 @@ def position_get(request):
         }
     )
 
+
 @view_config(route_name='last_checkin')
 @web
 def last_checkin(request):
@@ -86,3 +90,56 @@ def last_checkin(request):
     Get the last recorded bus checkin for this bus
     """
     return action_ok(data={})
+
+
+@view_config(route_name='near_stops')
+@web
+def near_stops(request):
+    params = dict(request.params)
+    # Validation
+    for field in ['lon', 'lat']:
+        if not params.get(field):
+            raise action_error(message='no {0}'.format(field), code=400)
+    # Convert input types
+    params['lon']       = float(params['lon'])
+    params['lat']       = float(params['lat'])
+    params['threshold'] = float(params.get('threshold', request.registry.settings.get('bus.api.threshold.default')))
+
+    bus_stops = DBSession.query(BusStop) \
+        .filter(BusStop.lon>params['lon']-params['threshold']) \
+        .filter(BusStop.lon<params['lon']+params['threshold']) \
+        .filter(BusStop.lat>params['lat']-params['threshold']) \
+        .filter(BusStop.lat<params['lat']+params['threshold']) \
+        .limit(50).all()
+
+    return action_ok(data={
+        'bus_stops': [bus_stop.to_dict() for bus_stop in bus_stops]
+    })
+
+
+@view_config(route_name='near_bus')
+@web
+def near_bus(request):
+    params = dict(request.params)
+    # Validation
+    for field in ['lon', 'lat']:
+        if not params.get(field):
+            raise action_error(message='no {0}'.format(field), code=400)
+    # Convert input types
+    params['lon']       = float(params['lon'])
+    params['lat']       = float(params['lat'])
+    params['threshold'] = float(params.get('threshold', request.registry.settings.get('bus.api.threshold.default')))
+
+    bus_positions = DBSession.query(BusPosition) \
+        .filter(BusPosition.timestamp>datetime.datetime.now()-datetime.timedelta(minutes=1)) \
+        .filter(BusPosition.lon>params['lon']-params['threshold']) \
+        .filter(BusPosition.lon<params['lon']+params['threshold']) \
+        .filter(BusPosition.lat>params['lat']-params['threshold']) \
+        .filter(BusPosition.lat<params['lat']+params['threshold']) \
+        .order_by(BusPosition.timestamp) \
+        .group_by(BusPosition.bus_id) \
+        .limit(10).all()
+
+    return action_ok(data={
+        'bus_positions': [bus_position.to_dict() for bus_position in bus_positions]
+    })
