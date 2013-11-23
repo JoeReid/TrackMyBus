@@ -43,6 +43,9 @@ run_production:
 init_db:
 	env/bin/python -mserver.model.setup --config_uri $(INI_DEV) --init_func server.model.init_data:init_data
 
+init_db_production:
+	env/bin/python -mserver.model.setup --config_uri $(INI_PROD) --init_func server.model.init_data:init_data
+
 import_stops:
 	env/bin/python -m$(PROJECT).model.setup --config_uri $(INI_DEV) --init_func $(PROJECT).model.init_data:init_data
 	env/bin/python -m$(PROJECT).scripts.import_busstops --config=$(INI_DEV)
