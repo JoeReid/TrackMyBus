@@ -98,21 +98,33 @@ def last_checkin(request):
 def near_stops(request):
     params = dict(request.params)
     # Validation
-    for field in ['lon', 'lat']:
-        if not params.get(field):
-            raise action_error(message='no {0}'.format(field), code=400)
+    #for field in ['lon', 'lat']:
+    #    if not params.get(field):
+    #        raise action_error(message='no {0}'.format(field), code=400)
+
     # Convert input types
-    params['lon']       = float(params['lon'])
-    params['lat']       = float(params['lat'])
-    params['threshold'] = float(params.get('threshold', request.registry.settings.get('bus.api.threshold.default')))
+    params['bbox'] = [float(n) for n in params['bbox'].split(",")]
 
-    bus_stops = DBSession.query(BusStop) \
-        .filter(BusStop.lon>params['lon']-params['threshold']) \
-        .filter(BusStop.lon<params['lon']+params['threshold']) \
-        .filter(BusStop.lat>params['lat']-params['threshold']) \
-        .filter(BusStop.lat<params['lat']+params['threshold']) \
-        .limit(50).all()
+    bus_stops_all = DBSession.query(BusStop) \
+        .limit(500).all()
+        #.limit(50).all()
+#        .filter(BusPosition.lon>params['bbox'][0]) \
+#        .filter(BusPosition.lon<params['bbox'][2]) \
+#        .filter(BusPosition.lat>params['bbox'][1]) \
+#        .filter(BusPosition.lat<params['bbox'][3]) \
 
+    bus_stops = []
+
+    for bus in bus_stops_all:
+        print(bus.lon, params['bbox'][0], params['bbox'][2])
+        print(bus.lat, params['bbox'][1], params['bbox'][3])
+        if (
+            bus.lon > params['bbox'][0] and bus.lon < params['bbox'][2] and
+            bus.lat > params['bbox'][1] and bus.lat < params['bbox'][3]
+        ):
+            bus_stops.append(bus)
+    
+    print("stops: %d " % len(bus_stops))
     return action_ok(data={
         "type": "FeatureCollection",
         "features": [bus_stop.to_dict() for bus_stop in bus_stops]
@@ -124,22 +136,19 @@ def near_stops(request):
 def near_bus(request):
     params = dict(request.params)
     # Validation
-    for field in ['lon', 'lat']:
-        if not params.get(field):
-            raise action_error(message='no {0}'.format(field), code=400)
-    # Convert input types
-    params['lon']       = float(params['lon'])
-    params['lat']       = float(params['lat'])
-    params['threshold'] = float(params.get('threshold', request.registry.settings.get('bus.api.threshold.default')))
+    #for field in ['lon', 'lat']:
+    #    if not params.get(field):
+    #        raise action_error(message='no {0}'.format(field), code=400)
+    params['bbox'] = [float(n) for n in params['bbox'].split(",")]
 
     bus_positions = DBSession.query(BusPosition) \
         .filter(BusPosition.timestamp>datetime.datetime.now()-datetime.timedelta(minutes=15)) \
-        .filter(BusPosition.lon>params['lon']-params['threshold']) \
-        .filter(BusPosition.lon<params['lon']+params['threshold']) \
-        .filter(BusPosition.lat>params['lat']-params['threshold']) \
-        .filter(BusPosition.lat<params['lat']+params['threshold']) \
         .order_by(BusPosition.timestamp) \
         .all()
+#        .filter(BusPosition.lon>params['bbox'][0]) \
+#        .filter(BusPosition.lon<params['bbox'][2]) \
+#        .filter(BusPosition.lat>params['bbox'][1]) \
+#        .filter(BusPosition.lat<params['bbox'][3]) \
         # group_by needs all columns to be explicit
         #.limit(10).all()
         #.group_by(BusPosition.bus_id) \
@@ -150,6 +159,8 @@ def near_bus(request):
         if pos.bus_id not in latest or latest[pos.bus_id].timestamp < pos.timestamp:
             latest[pos.bus_id] = pos
 
+    print("Busses %d" % len(latest))
     return action_ok(data={
-        'bus_positions': [bus_position.to_dict() for bus_position in latest.values()]
+        "type": "FeatureCollection",
+        "features": [bus_position.to_dict() for bus_position in latest.values()]
     })
